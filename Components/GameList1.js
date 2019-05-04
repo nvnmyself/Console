@@ -459,23 +459,25 @@ color="#2196F3"
           
       
   {this.state.userID===null || this.state.userID==''?<TouchableOpacity onPress={()=>this.props.navigation.navigate("Login")}>
-            <Ionicons style={{fontSize:28,margin:10,color:'#00BFFF'}} name="user-circle"/>
+            <Ionicons style={{fontSize:28,margin:10,color:'#0CE3E5'}} name="user-circle"/>
         </TouchableOpacity>:
      <View style={{flexDirection:'row'}}>
      <TouchableOpacity
+     style={{marginRight:15}}
         onPress={this.check1}
         >
        
-        <View style={{flexDirection:'row',backgroundColor:'#00BFFF',borderRadius:10}}>
+        <View style={{flexDirection:'row',backgroundColor:'#0CE3E5',borderRadius:10}}>
         <Ionicons style={{fontSize:15,marginTop:8,color:'white',padding:5,paddingLeft:10}} name="rupee"/>
          <Text style={{ margin:10,marginLeft:-3, textAlign: 'left',color:'white'}}>{this.state.balance}</Text>
         </View>
       </TouchableOpacity>
 
       <TouchableOpacity 
+       style={{marginRight:10}}
         onPress={this.check2}
         >
-        <Ionicons style={{fontSize:26,margin:6,color:'#00BFFF'}} name="bell">
+        <Ionicons style={{fontSize:26,margin:6,color:'#0CE3E5'}} name="bell">
        <Text style={{color:'red',fontSize:10,borderRadius:30,borderWidth:1}}></Text>
         </Ionicons>
        
@@ -495,7 +497,7 @@ color="#2196F3"
      animationType="fade"
       visible={this.state.isLoading?true:false}
      >
-     <BallIndicator style={{flex:1,backgroundColor:'white'}} size={100}  color='#00BFFF' />
+     <BallIndicator style={{flex:1,backgroundColor:'white'}} size={100}  color='#0CE3E5' />
      </Modal>:null}
   {this.state.connection_Status==="Offline"?   <View style={{width:'50%',height:40,backgroundColor:'green',alignSelf:'center'}}>
       <Text style={{alignSelf:"center",padding:10}}>You are {this.state.connection_Status}</Text>
@@ -821,7 +823,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius:30,
-    backgroundColor: "#00BFFF",
+    backgroundColor: "#0CE3E5",
   },
   followButtonText:{
     color: "#FFFFFF",

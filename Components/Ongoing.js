@@ -1,3 +1,6 @@
+
+const WEBVIEW_REF = "WEBVIEW_REF";
+
 import React, { Component } from 'react';
 import {
   StyleSheet,
@@ -10,7 +13,8 @@ import {
   FlatList,
   ProgressBarAndroid,
   Modal,
-  ImageBackground
+  ImageBackground,
+  Linking
 } from 'react-native';
 import Ionicons from 'react-native-vector-icons/FontAwesome';
 import AsyncStorage from '@react-native-community/async-storage';
@@ -25,6 +29,8 @@ import {
   UIActivityIndicator,
   WaveIndicator,
 } from 'react-native-indicators';
+import { WebView } from 'react-native-webview';
+
 export default class Ongoing extends Component {
   
   constructor(props) {
@@ -33,7 +39,8 @@ export default class Ongoing extends Component {
     userID:'',
     Alert_Visibility: false ,
     balance:'',
-    isLoading:true
+    isLoading:true,
+    url:'https://www.youtube.com/channel/UC8n52UgIAFP_fnBAptdQH9Q'
 
     };
   }
@@ -46,6 +53,8 @@ export default class Ongoing extends Component {
     this.focusListener = navigation.addListener("didFocus", () => {
       // The screen is focused
       // Call any action
+      this.openURL("https://www.youtube.com/channel/UCg6sphLhmSkXkJiM5oya9nQ")
+      this.props.navigation.navigate("Play")
       AsyncStorage.getItem("balance").then((value) => {
         this.setState({balance:value }
        
@@ -150,11 +159,52 @@ export default class Ongoing extends Component {
   clickEventListener(item) {
     Alert.alert(item.name)
   }
+  onShouldStartLoadWithRequest=(navigator)=> {
+    if (navigator.url.indexOf('https://www.youtube.com/channel/UC8n52UgIAFP_fnBAptdQH9Q') === -1) {
+        return true;
+    } else {
+       // this.refs[WEBVIEW_REF].stopLoading(); //Some reference to your WebView to make it stop loading that URL
+        return false;
+    }    
+}
+
+handleResponse = data => {
+  console.log(data)
+  if (data.title === "Success") {
+      this.setState({ showModal: false, connection:true });
+  } else if (data.title === "Cancel") {
+      this.setState({ showModal: false, connection:false });
+  } else {
+      return;
+  }
+};
+
+onBack() {
+  this.refs[WEBVIEW_REF].goBack();
+}
+
+onNavigationStateChange(navState) {
+  console.log(navState)
+  this.setState({
+    canGoBack: navState.canGoBack
+  });
+}
+
+openURL=(url)=> {
+  Linking.canOpenURL(url).then(supported => {
+    if (!supported) {
+      console.log('Can\'t handle url: ' + url);
+    } else {
+      return Linking.openURL(url);
+    }
+  }).catch(err => console.error('An error occurred', err));
+}
+
 
   render() {
     return (
       <View style={styles.container}>
-   <View style={{paddingTop: 15, paddingBottom: 15,backgroundColor:'black'}}>
+   {/* <View style={{paddingTop: 15, paddingBottom: 15,backgroundColor:'black'}}>
           
           <View style={{flexDirection: 'row', alignItems:'center', borderColor:'red',}}>
            <View style={{flex:1}}>
@@ -167,7 +217,7 @@ export default class Ongoing extends Component {
         onPress={()=>this.props.navigation.navigate("Wallet")}
         >
        
-        <View style={{flexDirection:'row',backgroundColor:'#00BFFF',borderRadius:10}}>
+        <View style={{flexDirection:'row',backgroundColor:'#0CE3E5',borderRadius:10}}>
         <Ionicons style={{fontSize:15,marginTop:8,color:'white',padding:5,paddingLeft:10}} name="rupee"/>
          <Text style={{ margin:10,marginLeft:-3, textAlign: 'left',color:'white'}}>{this.state.balance}</Text>
         </View>
@@ -176,203 +226,45 @@ export default class Ongoing extends Component {
       <TouchableOpacity 
         onPress={()=>this.props.navigation.navigate("Notification")}
         >
-        <Ionicons style={{fontSize:26,margin:6,color:'#00BFFF'}} name="bell">
+        <Ionicons style={{fontSize:26,margin:6,color:'#0CE3E5'}} name="bell">
        <Text style={{color:'red',fontSize:10,borderRadius:30,borderWidth:1}}></Text>
         </Ionicons>
        
         </TouchableOpacity>  
           </View>
-         
-        </View>
-        {this.state.isLoading? 
-     <Modal
-     transparent={true}
-     animated={true}
-     animationType="fade"
-      visible={this.state.isLoading?true:false}
-     >
-     <BallIndicator style={{flex:1,backgroundColor:'white'}} size={100}  color='#00BFFF' />
-     </Modal>:null}
-        <FlatList style={styles.list}
-          //contentContainerStyle={styles.listContainer}
-          data={this.state.dataSource}
-          horizontal={false}
-          //numColumns={2}
-          keyExtractor= {(item) => {
-            return item.gameID.toString();
-          }}
-          renderItem={({item}) => {
-            return (
-              <TouchableOpacity style={[styles.card,{borderWidth:1}]} onPress={() => {this.clickEventListener(item)}}>
-               
-             
-                <View style={styles.cardHeader}>
-                <Image style={styles.icon} source={{uri:item.images}}/>
-                  <Text style={{marginTop:10,fontWeight:'bold',fontSize:10}}>{item.title}</Text>
-                  <Text style={{marginTop:10,fontWeight:'bold',fontSize:10}}>{item.gamedate}</Text>
-    
-                </View>
-                
-
-                <View style={[styles.cardHeader,{marginTop:-20}]}>   
-                  <Text style={{fontWeight:'bold',fontSize:10}}>WIN PRIZE</Text>
-                  <Text style={{fontWeight:'bold',fontSize:10}}>PER KILL</Text>
-                  <Text style={{fontWeight:'bold',fontSize:10}}>ENTRY FEE</Text>   
-                </View>
-
-                <View style={[styles.cardHeader,{marginTop:-30}]}>   
-                  <Text style={{fontWeight:'bold',fontSize:20,color:'black'}}>{item.win}</Text>
-                  <Text style={{fontWeight:'bold',fontSize:20,color:'black'}}>{item.kill}</Text>
-                  <Text style={{fontWeight:'bold',fontSize:20,color:'black'}}>{item.entryFees}</Text>   
-                </View>
-
-                <View style={[styles.cardHeader,{marginTop:-25}]}>   
-                  <Text style={{fontWeight:'bold',fontSize:10}}>TYPE</Text>
-                  <Text style={{fontWeight:'bold',fontSize:10}}>VERSION</Text>
-                  <Text style={{fontWeight:'bold',fontSize:10}}>MAP</Text>   
-                </View>
-
-                <View style={[styles.cardHeader,{marginTop:-30}]}>   
-                  <Text style={{fontWeight:'bold',fontSize:15,color:'black'}}>{item.type}</Text>
-                  <Text style={{fontWeight:'bold',fontSize:15,color:'black'}}>{item.version}</Text>
-                  <Text style={{fontWeight:'bold',fontSize:15,color:'black'}}>{item.map}</Text>   
-                </View>
-              
-                <View style={[styles.cardFooter,{marginTop:-30}]}>
-                  <View style={{alignItems:"center", justifyContent:"center",flexDirection:'row'}}>
-                    {/* <Text style={styles.name}>{item.name}</Text> */}
-                    {/* <TouchableOpacity style={[styles.followButton,{width:150}]} onPress={()=> this.clickEventListener(item)}>
-                      <Text style={styles.followButtonText}>Watch Match</Text>  
-                    </TouchableOpacity>
-                    <TouchableOpacity style={[styles.followButton,{width:120,marginLeft:20}]} onPress={()=> this.clickEventListener(item)}>
-                      <Text style={styles.followButtonText}>Not Join </Text>  
-                    </TouchableOpacity> */}
-                  </View>
-                </View>
-              </TouchableOpacity>
-            )
-          }}/>
-          {
-  this.state.auth 
-  
-  ?
-
-   (
-     <Modal
-   transparent={false}
-
-   animationType={"slide"}
-
-   visible={this.state.auth}
-
-   onRequestClose={ () =>  {
-     this.setState({auth:false})
-     this.props.navigation.navigate("Play") }} >
-      <ImageBackground style={{flex:1,width:'100%',height:'100%'}} blurRadius={4} source={require('../assets/background.png')}>
-
-     <View style={styles.modalView}>
-          <Text style={{margin:15,alignSelf:'center',color:'white'}}>You Need To Login First</Text>
-          <Image style={{width:100,height:100,borderRadius:30}} source={require('../assets/logo.png')} /> 
-
-        
-             <View style={{height:200,width:"80%",backgroundColor: "transparent",}}>
-               
-              
-               <TouchableOpacity style={[styles.buttonContainer,{alignSelf:'center',backgroundColor:'#7C0000'}]}
-               onPress={()=>{this.setState({auth:false})
-               this.props.navigation.popToTop()
-               this.props.navigation.navigate("Login")
-              
-              }}
-               >
-                <Text style={{color:'white'}}>Login</Text>
-              </TouchableOpacity>
-
       
+        </View> */}
+        {/* <WebView
+        // ref={WEBVIEW_REF} 
+        source={{uri: 'https://www.youtube.com/channel/UC8n52UgIAFP_fnBAptdQH9Q'}}
+        style={{flex:1,}}
+       // onNavigationStateChange ={this.onShouldStartLoadWithRequest}
+    //    onNavigationStateChange={data =>
+    //     this.handleResponse(data)
+    // }
+    
+      /> */}
+   <View style={styles.topbar}>
+          <TouchableOpacity
+            disabled={!this.state.canGoBack}
+            onPress={this.onBack.bind(this)}
+            >
+            <Text style={this.state.canGoBack ? styles.topbarText : styles.topbarTextDisabled}>Go Back</Text>
+          </TouchableOpacity>
+        </View>
 
-              <TouchableOpacity style={[styles.buttonContainer,{alignSelf:'center',backgroundColor:'#991313'}]}
-              onPress={()=>this.props.navigation.navigate("Register")}
-              >
-                <Text style={{color:'white'}}>Signup</Text>
-              </TouchableOpacity>
-               </View>
-           
-           
-             
-       </View>
-
-       </ImageBackground> 
-   </Modal>
-   ) 
-
-   :
-
-   null
-
-}
-
-<Modal
- 
- visible={this.state.Alert_Visibility}
-
- transparent={true}
-
- animationType={"fade"}
-
- onRequestClose={ () => { this.Show_Custom_Alert(!this.state.Alert_Visibility)} } >
-
-
-   <View style={{ flex:1, alignItems: 'center', justifyContent: 'center' }}>
-
-
-       <View style={styles.Alert_Main_View}>
-       <ImageBackground style={{flex:1,width:'100%'}} blurRadius={9} source={require('../assets/background.png')} >
-
-
-           <Image style={[styles.Alert_Title,{width:60,height:60,alignSelf:'center',borderRadius:17}]} source={require("../assets/logo.png")} />
-
-
-         
-
-
-           <Text style={styles.Alert_Message}> Are You Sure want to logout. </Text>
-
-
-           <View style={{ width: '100%', height: 1, backgroundColor: 'transparent'}} />
-
-
-           <View style={{flexDirection: 'row', height: '30%'}}>
-
-               <TouchableOpacity 
-                   style={styles.buttonStyle}
-                   onPress={this.ok_Button} 
-                   activeOpacity={0.7} 
-                    >
-
-                   <Text style={styles.TextStyle}> OK </Text>
-       
-               </TouchableOpacity>
-
-               <View style={{ width: 1, height: '100%', backgroundColor: 'transparent'}} />
-
-               <TouchableOpacity 
-                   style={styles.buttonStyle} 
-                   onPress={() => { this.Show_Custom_Alert(!this.state.Alert_Visibility)} } 
-                   activeOpacity={0.7} 
-                   >
-
-                   <Text style={styles.TextStyle}> NO </Text>
-       
-               </TouchableOpacity>
-
-           </View>
-         
-</ImageBackground>
-       </View>
-
-   </View>
-
-</Modal>
+      <WebView
+      //{...props}
+      ref={WEBVIEW_REF}
+      style={{flex:1}}
+      javaScriptEnabled={true}
+      domStorageEnabled={true} 
+      
+      source={{uri: this.state.url}}
+      onNavigationStateChange=
+      {this.onNavigationStateChange.bind(this)}
+    />
+          
       </View>
     );
   }
@@ -457,7 +349,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius:10,
-    backgroundColor: "#00BFFF",
+    backgroundColor: "#0CE3E5",
   },
   followButtonText:{
     color: "#FFFFFF",
@@ -476,7 +368,7 @@ const styles = StyleSheet.create({
     marginBottom:20,
     width:250,
     borderRadius:10,
-    backgroundColor: "#00BFFF",
+    backgroundColor: "#0CE3E5",
   },   modalView:{
  
     flex:1, 
@@ -532,5 +424,13 @@ const styles = StyleSheet.create({
       textAlign:'center',
       fontSize: 22,
       marginTop: -5
+  },
+  topbar: {
+    height: 30,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  topbarTextDisabled: {
+    color: 'gray'
   }
 });     

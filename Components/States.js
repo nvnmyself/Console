@@ -9,106 +9,108 @@ import {
   ScrollView,
   FlatList,
   ProgressBarAndroid,
-  Modal,ImageBackground,Linking,InteractionManager
+  Modal,
+  ImageBackground
 } from 'react-native';
 import Ionicons from 'react-native-vector-icons/FontAwesome';
 import AsyncStorage from '@react-native-community/async-storage';
 import {
   BallIndicator,
- } from 'react-native-indicators';
-export default class Results extends Component {
+  BarIndicator,
+  DotIndicator,
+  MaterialIndicator,
+  PacmanIndicator,
+  PulseIndicator,
+  SkypeIndicator,
+  UIActivityIndicator,
+  WaveIndicator,
+} from 'react-native-indicators';
+export default class States extends Component {
   
   constructor(props) {
     super(props);
-   this.state={
-     isLoading:true,
-     Alert_Visibility: false ,
-     userID:'',
-     balance:''
-   }
+    this.state = {
+    userID:'',
+    Alert_Visibility: false ,
+    balance:'',
+    isLoading:true
+
+    };
   }
 
-  componentDidMount() {
- 
-      this.props.navigation.setParams({ 'hide': 'yes' });
- 
+  componentDidMount(){
+
+
 
     const { navigation } = this.props;
     this.focusListener = navigation.addListener("didFocus", () => {
       // The screen is focused
       // Call any action
       AsyncStorage.getItem("balance").then((value) => {
-        this.setState({balance:value });
+        this.setState({balance:value }
+       
+          );   
       });
 
       AsyncStorage.getItem("userID").then((value) => {
         this.setState({userID:value }
        
-          );this.AddMoney()
+          );   this.check()
       });
     
     });
- 
+   }
+  
+  check=()=>{
+  // alert("hello")
+  
+  if(this.state.userID==null || this.state.userID==''){
+    
+    this.Authentication(true)
   }
-
-
+  else{
+   // alert("YR")
+   this.AddMoney()
+  }
+  
+  }
   componentWillUnmount(){
- 
+   
     this.focusListener.remove();
   }
-
-
+   
   Show_Custom_Alert(visible) {
  
     this.setState({Alert_Visibility: visible});
     
   }
+
   ok_Button=()=>{
 
     AsyncStorage.removeItem("userID")
        this.setState({userID:null,isLoading:true})
        this.Show_Custom_Alert(!this.state.Alert_Visibility)
+       this.Authentication(true)
        Alert.alert("Logged Out Successfully")
-       this.AddMoney()
+      
 
 }
 
 
-  clickEventListener(item) {
-    Alert.alert(item.name)
-  }
+ Authentication=(visible)=> 
+ {
 
-  check1=()=>{
-    // alert(this.state.userID)
-   if(this.state.userID==null || this.state.userID==''){
-    // alert("You need to Login first");
-     this.props.navigation.navigate("Login")
-   }
-   else{
-     //alert("YR")
-    this.props.navigation.navigate("Wallet")
-   }
-   
-   }
+   this.setState({
 
-   check2=()=>{
-    // alert(this.state.userID)
-   if(this.state.userID==null || this.state.userID==''){
-    // alert("You need to Login first");
-     this.props.navigation.navigate("Login")
-   }
-   else{
-     //alert("YR")
-    this.props.navigation.navigate("Notification")
-   }
-   
-   }
+     auth: visible,
 
+    });
+     
+ }
 
   AddMoney = ()=>{
     this.setState({isLoading:true})
-    var dataToSend = { date:'10/04/2019',
-                        played:1  };
+    var dataToSend = { userID:this.state.userID};
     
     //making data to send on server
     var formBody = [];
@@ -119,7 +121,7 @@ export default class Results extends Component {
     }
     formBody = formBody.join("&");
     //POST request 
-    fetch('http://www.radicaltechsupport.com/pubg/activity.php?method=allgames', {
+    fetch('http://www.radicaltechsupport.com/pubg/activity.php?method=mychallenge', {
       method: "POST",//Request Type 
       body: formBody,//post body 
       headers: {//Header Defination 
@@ -145,21 +147,14 @@ export default class Results extends Component {
     });
   }
 
-  openURL(url) {
-    Linking.canOpenURL(url).then(supported => {
-      if (!supported) {
-        console.log('Can\'t handle url: ' + url);
-      } else {
-        return Linking.openURL(url);
-      }
-    }).catch(err => console.error('An error occurred', err));
+  clickEventListener(item) {
+    Alert.alert(item.name)
   }
-
 
   render() {
     return (
       <View style={styles.container}>
-                <View style={{paddingTop: 15, paddingBottom: 15,backgroundColor:'black'}}>
+   <View style={{paddingTop: 15, paddingBottom: 15,backgroundColor:'black'}}>
           
           <View style={{flexDirection: 'row', alignItems:'center', borderColor:'red',}}>
            <View style={{flex:1}}>
@@ -168,44 +163,37 @@ export default class Results extends Component {
     
             
         
-    {this.state.userID===null || this.state.userID==''?<TouchableOpacity onPress={()=>this.props.navigation.navigate("Login")}>
-              <Ionicons style={{fontSize:28,margin:10,color:'#0CE3E5'}} name="user-circle"/>
-          </TouchableOpacity>:
-       <View style={{flexDirection:'row'}}>
-       <TouchableOpacity
-        style={{marginRight:15}}
-          onPress={this.check1}
-          >
-         
-          <View style={{flexDirection:'row',backgroundColor:'#0CE3E5',borderRadius:10}}>
-          <Ionicons style={{fontSize:15,marginTop:8,color:'white',padding:5,paddingLeft:10}} name="rupee"/>
-           <Text style={{ margin:10,marginLeft:-3, textAlign: 'left',color:'white'}}>{this.state.balance}</Text>
-          </View>
-        </TouchableOpacity>
-  
-        <TouchableOpacity 
-         style={{marginRight:10}}
-          onPress={this.check2}
-          >
-          <Ionicons style={{fontSize:26,margin:6,color:'#0CE3E5'}} name="bell">
-         <Text style={{color:'red',fontSize:10,borderRadius:30,borderWidth:1}}></Text>
-          </Ionicons>
-         
-          </TouchableOpacity>
-          </View>
-  }
-  
-  
-           
+           <TouchableOpacity
+           style={{marginRight:15}}
+        onPress={()=>this.props.navigation.navigate("Wallet")}
+        >
+       
+        <View style={{flexDirection:'row',backgroundColor:'#0CE3E5',borderRadius:10}}>
+        <Ionicons style={{fontSize:15,marginTop:8,color:'white',padding:5,paddingLeft:10}} name="rupee"/>
+         <Text style={{ margin:10,marginLeft:-3, textAlign: 'left',color:'white'}}>{this.state.balance}</Text>
+        </View>
+      </TouchableOpacity>
+
+      <TouchableOpacity 
+      style={{marginRight:10}}
+        onPress={()=>this.props.navigation.navigate("Notification")}
+        >
+        <Ionicons style={{fontSize:26,margin:6,color:'#0CE3E5'}} name="bell">
+       <Text style={{color:'red',fontSize:10,borderRadius:30,borderWidth:1}}></Text>
+        </Ionicons>
+       
+        </TouchableOpacity>  
           </View>
          
         </View>
         {this.state.isLoading? 
      <Modal
      transparent={true}
+     animated={true}
+     animationType="fade"
       visible={this.state.isLoading?true:false}
      >
-     <BallIndicator style={{flex:1,backgroundColor:'transparent'}} size={100}  color='#0CE3E5' />
+     <BallIndicator style={{flex:1,backgroundColor:'white'}} size={100}  color='#0CE3E5' />
      </Modal>:null}
         <FlatList style={styles.list}
           //contentContainerStyle={styles.listContainer}
@@ -217,12 +205,12 @@ export default class Results extends Component {
           }}
           renderItem={({item}) => {
             return (
-              <TouchableOpacity style={[styles.card,{borderWidth:1}]} >
+              <TouchableOpacity style={[styles.card,{borderWidth:1}]} onPress={() => {this.clickEventListener(item)}}>
                
              
                 <View style={styles.cardHeader}>
                 <Image style={styles.icon} source={{uri:item.images}}/>
-                  <Text style={{marginTop:10,fontWeight:'bold',fontSize:10}}>{item.title} #2335 </Text>
+                  <Text style={{marginTop:10,fontWeight:'bold',fontSize:10}}>{item.title}</Text>
                   <Text style={{marginTop:10,fontWeight:'bold',fontSize:10}}>{item.gamedate}</Text>
     
                 </View>
@@ -239,7 +227,7 @@ export default class Results extends Component {
                   <Text style={{fontWeight:'bold',fontSize:20,color:'black'}}>{item.kill}</Text>
                   <Text style={{fontWeight:'bold',fontSize:20,color:'black'}}>{item.entryFees}</Text>   
                 </View>
-               
+
                 <View style={[styles.cardHeader,{marginTop:-25}]}>   
                   <Text style={{fontWeight:'bold',fontSize:10}}>TYPE</Text>
                   <Text style={{fontWeight:'bold',fontSize:10}}>VERSION</Text>
@@ -247,34 +235,85 @@ export default class Results extends Component {
                 </View>
 
                 <View style={[styles.cardHeader,{marginTop:-30}]}>   
-                  <Text style={{fontWeight:'bold',fontSize:15,color:'black'}}>DUO</Text>
-                  <Text style={{fontWeight:'bold',fontSize:15,color:'black'}}>TPP</Text>
-                  <Text style={{fontWeight:'bold',fontSize:15,color:'black'}}>ERANGLE</Text>   
+                  <Text style={{fontWeight:'bold',fontSize:15,color:'black'}}>{item.type}</Text>
+                  <Text style={{fontWeight:'bold',fontSize:15,color:'black'}}>{item.version}</Text>
+                  <Text style={{fontWeight:'bold',fontSize:15,color:'black'}}>{item.map}</Text>   
                 </View>
               
                 <View style={[styles.cardFooter,{marginTop:-30}]}>
                   <View style={{alignItems:"center", justifyContent:"center",flexDirection:'row'}}>
-               
-                    <TouchableOpacity style={[styles.followButton,{width:150,margin:2}]} onPress={() => {
-                AsyncStorage.setItem("game_ID",item.gameID)
-                this.props.navigation.navigate("MatchResult")
-              }}>
-                      <Text style={styles.followButtonText}>Watch Winners</Text>  
+                    {/* <Text style={styles.name}>{item.name}</Text> */}
+                    {/* <TouchableOpacity style={[styles.followButton,{width:150}]} onPress={()=> this.clickEventListener(item)}>
+                      <Text style={styles.followButtonText}>Watch Match</Text>  
                     </TouchableOpacity>
-                    <TouchableOpacity style={[styles.followButton,{width:150,margin:2}]} onPress={
-              () => this.openURL('https://www.youtube.com/')
-            }
-             
-              >
-                      <Text style={styles.followButtonText}>View Match</Text>  
-                    </TouchableOpacity>
-                    
+                    <TouchableOpacity style={[styles.followButton,{width:120,marginLeft:20}]} onPress={()=> this.clickEventListener(item)}>
+                      <Text style={styles.followButtonText}>Not Join </Text>  
+                    </TouchableOpacity> */}
                   </View>
                 </View>
               </TouchableOpacity>
             )
           }}/>
-          <Modal
+          {
+  this.state.auth 
+  
+  ?
+
+   (
+     <Modal
+   transparent={false}
+
+   animationType={"slide"}
+
+   visible={this.state.auth}
+
+   onRequestClose={ () =>  {
+     this.setState({auth:false})
+     this.props.navigation.navigate("Play") }} >
+      <ImageBackground style={{flex:1,width:'100%',height:'100%'}} blurRadius={4} source={require('../assets/background.png')}>
+
+     <View style={styles.modalView}>
+          <Text style={{margin:15,alignSelf:'center',color:'white'}}>You Need To Login First</Text>
+          <Image style={{width:100,height:100,borderRadius:30}} source={require('../assets/logo.png')} /> 
+
+        
+             <View style={{height:200,width:"80%",backgroundColor: "transparent",}}>
+               
+              
+               <TouchableOpacity style={[styles.buttonContainer,{alignSelf:'center',backgroundColor:'#7C0000'}]}
+               onPress={()=>{this.setState({auth:false})
+               this.props.navigation.popToTop()
+               this.props.navigation.navigate("Login")
+              
+              }}
+               >
+                <Text style={{color:'white'}}>Login</Text>
+              </TouchableOpacity>
+
+      
+
+              <TouchableOpacity style={[styles.buttonContainer,{alignSelf:'center',backgroundColor:'#991313'}]}
+              onPress={()=>this.props.navigation.navigate("Register")}
+              >
+                <Text style={{color:'white'}}>Signup</Text>
+              </TouchableOpacity>
+               </View>
+           
+           
+             
+       </View>
+
+       </ImageBackground> 
+   </Modal>
+   ) 
+
+   :
+
+   null
+
+}
+
+<Modal
  
  visible={this.state.Alert_Visibility}
 
@@ -430,7 +469,25 @@ const styles = StyleSheet.create({
     height: 60,
     width: 60, 
   },
-  Alert_Main_View:{
+  buttonContainer: {
+    marginTop:10,
+    height:45,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom:20,
+    width:250,
+    borderRadius:10,
+    backgroundColor: "#0CE3E5",
+  },   modalView:{
+ 
+    flex:1, 
+    justifyContent: 'center', 
+    alignItems: 'center', 
+    backgroundColor: 'rgba(0,0,0,0.4)'
+ 
+   },
+   Alert_Main_View:{
   
     alignItems: 'center',
     justifyContent: 'center',

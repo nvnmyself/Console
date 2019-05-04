@@ -76,7 +76,7 @@ export default class MatchResult extends Component {
            <TouchableOpacity
             onPress={()=>this.props.navigation.goBack()}
             >
-            <Ionicons style={{fontSize:30,margin:10,color:'#00BFFF'}} name="chevron-left"/>
+            <Ionicons style={{fontSize:30,margin:10,color:'#0CE3E5'}} name="chevron-left"/>
             {/* <Text style={{ flex: 1, textAlign: 'right'}}>Right</Text> */}
           </TouchableOpacity>
      

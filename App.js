@@ -15,6 +15,7 @@ import Ongoing from './Components/Ongoing';
 import Notification from './Components/Notification';
 import MatchResult from './Components/MatchResult';
 import Earning from './Components/Earn';
+import States from './Components/States';
 
 class HomeScreen extends React.Component {
   render() {
@@ -105,33 +106,33 @@ const getTabBarIcon = (navigation, focused, tintColor) => {
   
   if (routeName === 'Play') {
     
-    iconName = `play${focused ? '' : ''}`;
-    iconColor = focused?'#991313':'#00BFFF';
-    iconSize=focused?27:25
+    iconName = `gamepad${focused ? '' : ''}`;
+    iconColor = focused?'#0CE3E5':'#0CE3E5';
+    iconSize=focused?22:22
     // We want to add badges to home tab icon
-   
+   //#00BF-F-F
   } else if (routeName === 'Me') {
     iconName = `smile-o${focused ? '' : ''}`;
-    iconColor = focused?'#991313':'#00BFFF';
+    iconColor = focused?'#0CE3E5':'#0CE3E5';
     iconSize=focused?28:25
   }
   else if (routeName === 'Tournament') {
   
 
  
-    iconName = `certificate${focused ? '' : ''}`;
-    iconColor = focused?'#991313':'#00BFFF';
-    iconSize=focused?28:25
+    iconName = `flag${focused ? '' : ''}`;
+    iconColor = focused?'#0CE3E5':'#0CE3E5';
+    iconSize=focused?24:24
   }
-  else if (routeName === 'Challenges') {
-    iconName = `star${focused ? '' : ''}`;
-    iconColor = focused?'#991313':'#00BFFF';
-    iconSize=focused?27:25;
+  else if (routeName === 'VideoStream') {
+    iconName = `video-camera${focused ? '' : ''}`;
+    iconColor = focused?'#0CE3E5':'#0CE3E5';
+    iconSize=focused?22:22;
     // IconComponent = HomeIconWithBadge;
   }
   else if (routeName === 'Result') {
-    iconName = `rocket${focused ? '' : ''}`;
-    iconColor = focused?'#991313':'#00BFFF';
+    iconName = `trophy${focused ? '' : ''}`;
+    iconColor = focused?'#0CE3E5':'#0CE3E5';
     iconSize=focused?26:25
   }
 
@@ -234,6 +235,9 @@ const ProfileViews =createStackNavigator({
   ProfileView:{
     screen:ProfileView
   },
+  States:{
+    screen:States
+  }
   
 },{
   headerMode:'none'
@@ -245,7 +249,7 @@ export default createAppContainer(
   createMaterialBottomTabNavigator(
     { 
       Tournament:{screen:Earns},
-      Challenges:{screen:Ongoings},
+      VideoStream:{screen:Ongoings},
       Play: { screen: Plays },
       Result:{screen:Resultss},
       Me: { screen: ProfileViews },
@@ -256,7 +260,7 @@ export default createAppContainer(
     {
        initialRouteName:'Play',
        shifting:true,
-     activeTintColor:'#00BFFF',
+     activeTintColor:'#0CE3E5',
       barStyle:{backgroundColor:'#241212',height:60,},
      labeled:true,
      
@@ -297,3 +301,5 @@ Plays.navigationOptions = ({ navigation }) => {
     tabBarVisible
   };
 };
+
+

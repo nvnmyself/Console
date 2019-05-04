@@ -11,7 +11,7 @@ import {
   Alert,
   
   ImageBackground
-
+//#00BFFF
 } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 import AsyncStorage from '@react-native-community/async-storage';
@@ -356,7 +356,7 @@ UpdateProfile = ()=>{
      transparent={true}
       visible={this.state.isLoading?true:false}
      >
-     <BallIndicator style={{flex:1,backgroundColor:'transparent'}} size={100}  color='#00BFFF' />
+     <BallIndicator style={{flex:1,backgroundColor:'transparent'}} size={100}  color='#0CE3E5' />
      </Modal>:null}
 
           <View style={[styles.profileDetail,{backgroundColor:'transparent',}]}>
@@ -389,8 +389,10 @@ UpdateProfile = ()=>{
                 <Text style={{color:'white'}}>Share And Earn</Text>  
               </TouchableOpacity> 
 
-              <TouchableOpacity style={[styles.buttonContainer]}>
-                <Text style={{color:'white'}}>Terms Conditions</Text>  
+              <TouchableOpacity style={[styles.buttonContainer]}
+              onPress={()=>this.props.navigation.navigate("States")}
+              >
+                <Text style={{color:'white'}}>My Statistics</Text>  
               </TouchableOpacity> 
               
               <TouchableOpacity style={[styles.buttonContainer]}
@@ -864,7 +866,7 @@ const styles = StyleSheet.create({
     marginBottom:20,
     width:250,
     borderRadius:10,
-    backgroundColor: "#00BFFF",
+    backgroundColor: "#0CE3E5",
   },
   description:{
     fontSize:20,
